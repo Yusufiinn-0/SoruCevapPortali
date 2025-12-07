@@ -23,16 +23,71 @@ dotnet run
 1. Proje klasöründeki **`Baslat.bat`** dosyasına çift tıklayın
 2. Otomatik olarak LocalDB başlatılacak ve proje çalışacak
 
-### Yöntem 3: Visual Studio ile
+### Yöntem 3: Visual Studio ile (Detaylı Adımlar)
 
-1. Visual Studio 2022'de projeyi açın
-2. **Tools → NuGet Package Manager → Package Manager Console** açın
-3. Şu komutları sırayla çalıştırın:
-```
-sqllocaldb start MSSQLLocalDB
-Update-Database
-```
-4. F5 ile projeyi çalıştırın
+#### Adım 1: Projeyi Açma
+
+1. **Visual Studio 2022**'yi açın
+2. **File → Open → Project/Solution** (veya `Ctrl+Shift+O`)
+3. Şu dosyayı seçin:
+   ```
+   C:\Users\yusuf\OneDrive\Masaüstü\SoruCevapPortali\SoruCevapPortali\SoruCevapPortali.csproj
+   ```
+4. Proje yüklenecek ve Solution Explorer'da görünecek
+
+#### Adım 2: LocalDB'yi Başlatma
+
+1. **Tools → NuGet Package Manager → Package Manager Console** menüsünü açın
+   - Veya kısayol: `Alt+T, N, O`
+2. Package Manager Console penceresinin altında şu komutu çalıştırın:
+   ```powershell
+   sqllocaldb start MSSQLLocalDB
+   ```
+3. "LocalDB instance 'MSSQLLocalDB' started." mesajını görmelisiniz
+
+#### Adım 3: Veritabanını Oluşturma
+
+**Seçenek A: Otomatik (Önerilen)**
+- Proje zaten `Program.cs` içinde otomatik veritabanı oluşturma koduna sahip
+- İlk çalıştırmada veritabanı otomatik oluşturulacak
+
+**Seçenek B: Manuel Migration**
+- Package Manager Console'da şu komutu çalıştırın:
+  ```powershell
+  Update-Database
+  ```
+
+#### Adım 4: Projeyi Çalıştırma
+
+1. **F5** tuşuna basın (veya **Debug → Start Debugging**)
+   - Veya **Ctrl+F5** (Debug olmadan çalıştırma)
+2. Visual Studio otomatik olarak:
+   - Projeyi derleyecek (Build)
+   - Tarayıcıyı açacak
+   - Uygulamayı başlatacak
+
+#### Adım 5: İlk Giriş
+
+1. Tarayıcıda otomatik açılan sayfada (veya manuel olarak `http://localhost:5000`) giriş ekranı görünecek
+2. Giriş bilgileri:
+   - **E-posta:** `admin@sorucevap.com`
+   - **Şifre:** `admin123`
+3. Giriş yaptıktan sonra Admin Paneline yönlendirileceksiniz
+
+#### ⚠️ Önemli Notlar
+
+- **Port Değiştirme:** Eğer 5000 portu kullanılıyorsa:
+  - `Properties/launchSettings.json` dosyasında port numarasını değiştirebilirsiniz
+  - Veya Visual Studio'da proje özelliklerinden port ayarını yapabilirsiniz
+
+- **Hata Durumunda:**
+  - **Build → Rebuild Solution** yapın
+  - **View → Output** penceresinden hata mesajlarını kontrol edin
+  - LocalDB'nin çalıştığından emin olun: `sqllocaldb info MSSQLLocalDB`
+
+- **Debug Modu:**
+  - **F5:** Debug modunda çalıştırır (breakpoint'ler çalışır)
+  - **Ctrl+F5:** Normal modda çalıştırır (daha hızlı)
 
 ---
 
