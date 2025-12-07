@@ -1,0 +1,458 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        animation: movePattern 30s linear infinite;
+    }
+    
+    @@keyframes movePattern {
+        0% { transform: translate(-50%, -50%); }
+        100% { transform: translate(0%, 0%); }
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+    
+    .hero-title span {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .hero-text {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 35px;
+        line-height: 1.8;
+    }
+    
+    .hero-search {
+        background: white;
+        border-radius: 16px;
+        padding: 8px;
+        display: flex;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        max-width: 600px;
+    }
+    
+    .hero-search input {
+        flex: 1;
+        border: none;
+        padding: 18px 25px;
+        font-size: 16px;
+        border-radius: 12px;
+        outline: none;
+    }
+    
+    .hero-search button {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        border: none;
+        padding: 18px 35px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .hero-search button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+    }
+    
+    .hero-stats {
+        display: flex;
+        gap: 50px;
+        margin-top: 50px;
+    }
+    
+    .hero-stat {
+        text-align: center;
+    }
+    
+    .hero-stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+    }
+    
+    .hero-stat-label {
+        color: rgba(255,255,255,0.6);
+        font-size: 14px;
+    }
+    
+    .hero-image {
+        position: relative;
+    }
+    
+    .hero-image img {
+        max-width: 100%;
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @@keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    /* Categories Section */
+    .categories-section {
+        padding: 80px 0;
+        background: #f8fafc;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 15px;
+    }
+    
+    .section-subtitle {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 50px;
+    }
+    
+    .category-card {
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        text-align: center;
+        transition: all 0.4s ease;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border: 2px solid transparent;
+        cursor: pointer;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .category-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 32px;
+        transition: all 0.3s ease;
+    }
+    
+    .category-card:hover .category-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .category-icon.tech { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .category-icon.code { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .category-icon.edu { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .category-icon.health { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .category-icon.general { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+    
+    .category-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+    
+    .category-count {
+        color: #6c757d;
+        font-size: 14px;
+    }
+    
+    /* How It Works */
+    .how-section {
+        padding: 80px 0;
+        background: white;
+    }
+    
+    .step-card {
+        text-align: center;
+        padding: 30px;
+    }
+    
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+    }
+    
+    .step-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 12px;
+    }
+    
+    .step-text {
+        color: #6c757d;
+        line-height: 1.7;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 80px 0;
+        text-align: center;
+    }
+    
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 20px;
+    }
+    
+    .cta-text {
+        color: rgba(255,255,255,0.7);
+        font-size: 1.1rem;
+        margin-bottom: 35px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .btn-cta {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        color: white;
+        padding: 18px 45px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+        color: white;
+    }
+    
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+        }
+        .hero-stats {
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .hero-search {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .hero-search button {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Merak Ettiğin Her Şeyi <span>Sor!</span>
+                    </h1>
+                    <p class="hero-text">
+                        Aklına takılan soruları sor, uzman topluluğumuzdan hızlı ve güvenilir cevaplar al. 
+                        Bilgi paylaşarak birlikte öğrenelim.
+                    </p>
+                    <div class="hero-search">
+                        <input type="text" placeholder="Bir soru ara veya yaz..." />
+                        <button type="button">
+                            <i class="fas fa-search me-2"></i>Ara
+                        </button>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">1,234</div>
+                            <div class="hero-stat-label">Aktif Kullanıcı</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">5,678</div>
+                            <div class="hero-stat-label">Soru</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">12,345</div>
+                            <div class="hero-stat-label">Cevap</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-image text-center">
+                    <svg width="500" height="400" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="250" cy="200" r="150" fill="url(#gradient1)" opacity="0.1"/>
+                        <circle cx="250" cy="200" r="100" fill="url(#gradient1)" opacity="0.2"/>
+                        <text x="200" y="180" fill="white" font-size="120" font-weight="bold">?</text>
+                        <circle cx="350" cy="100" r="30" fill="#3b82f6" opacity="0.5"/>
+                        <circle cx="150" cy="300" r="20" fill="#60a5fa" opacity="0.5"/>
+                        <circle cx="400" cy="280" r="25" fill="#3b82f6" opacity="0.3"/>
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3b82f6"/>
+                                <stop offset="100%" stop-color="#60a5fa"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-title">Popüler Kategoriler</h2>
+            <p class="section-subtitle">İlgilendiğin konuları keşfet, sorularını paylaş</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon tech">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <h5 class="category-name">Teknoloji</h5>
+                    <span class="category-count">248 soru</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon code">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h5 class="category-name">Yazılım</h5>
+                    <span class="category-count">512 soru</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon edu">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h5 class="category-name">Eğitim</h5>
+                    <span class="category-count">186 soru</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon health">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h5 class="category-name">Sağlık</h5>
+                    <span class="category-count">94 soru</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon general">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h5 class="category-name">Genel</h5>
+                    <span class="category-count">325 soru</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="category-card">
+                    <div class="category-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h5 class="category-name">Tümünü Gör</h5>
+                    <span class="category-count">Keşfet →</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-section">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-title">Nasıl Çalışır?</h2>
+            <p class="section-subtitle">Üç basit adımda sorularına cevap bul</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4 class="step-title">Soru Sor</h4>
+                    <p class="step-text">Aklına takılan soruyu yaz ve uygun kategoriyi seç. Detaylı sorular daha iyi cevaplar alır.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4 class="step-title">Cevap Al</h4>
+                    <p class="step-text">Uzman topluluğumuz sorunu inceleyip en doğru cevabı verir. Bildirimlerle takip et.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4 class="step-title">Paylaş & Öğren</h4>
+                    <p class="step-text">En iyi cevabı işaretle, başkalarına yardım et. Bilgi paylaştıkça çoğalır!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Hemen Topluluğa Katıl!</h2>
+        <p class="cta-text">
+            Binlerce kullanıcı ile birlikte sorularını sor, bildiklerini paylaş ve yeni şeyler öğren.
+        </p>
+        <a href="@Url.Action("Login", "Account")" class="btn-cta">
+            <i class="fas fa-rocket me-2"></i>Ücretsiz Başla
+        </a>
+    </div>
+</section>

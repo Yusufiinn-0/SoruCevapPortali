@@ -1,0 +1,150 @@
+@model List<CevapViewModel>
+@{
+    ViewData["Title"] = "Cevaplar";
+}
+
+<div class="page-header">
+    <h2 class="page-title">Cevaplar</h2>
+</div>
+
+<div class="data-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cevap</th>
+                    <th>Soru</th>
+                    <th>Kullanıcı</th>
+                    <th>Beğeni</th>
+                    <th>Doğru?</th>
+                    <th>Onay</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var cevap in Model)
+                    {
+                        <tr>
+                            <td>#@cevap.CevapId</td>
+                            <td>
+                                <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    @cevap.Icerik
+                                </div>
+                                <small class="text-muted">@cevap.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Details", "Soru", new { area = "Admin", id = cevap.SoruId })" 
+                                   class="text-primary text-decoration-none">
+                                    <div style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        @cevap.SoruBaslik
+                                    </div>
+                                </a>
+                            </td>
+                            <td>@cevap.KullaniciAdi</td>
+                            <td><i class="fas fa-heart text-danger me-1"></i>@cevap.BegeniSayisi</td>
+                            <td>
+                                @if (cevap.DogruCevapMi)
+                                {
+                                    <span class="badge bg-success" id="dogru-@cevap.CevapId">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary" id="dogru-@cevap.CevapId">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (cevap.OnayliMi)
+                                {
+                                    <span class="badge-status badge-active" id="onay-@cevap.CevapId">Onaylı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status badge-pending" id="onay-@cevap.CevapId">Bekliyor</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="@Url.Action("Details", new { id = cevap.CevapId })" 
+                                       class="btn-action view" title="Detay">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = cevap.CevapId })" 
+                                       class="btn-action edit" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    @if (!cevap.OnayliMi)
+                                    {
+                                        <button type="button" class="btn-action view" title="Onayla"
+                                                onclick="onayla(@cevap.CevapId)">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    }
+                                    <button type="button" class="btn-action @(cevap.DogruCevapMi ? "view" : "")" 
+                                            title="Doğru İşaretle" onclick="dogruIsaretle(@cevap.CevapId)"
+                                            style="@(cevap.DogruCevapMi ? "" : "background: rgba(108, 117, 125, 0.1); color: #6c757d;")">
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
+                                    <form asp-action="Delete" method="post" style="display:inline;" 
+                                          onsubmit="return confirm('Bu cevabı silmek istediğinize emin misiniz?');">
+                                        <input type="hidden" name="id" value="@cevap.CevapId" />
+                                        <button type="submit" class="btn-action delete" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                            Henüz cevap eklenmemiş.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function onayla(id) {
+    $.post('@Url.Action("Onayla")', { id: id }, function(response) {
+        if (response.success) {
+            var onayBadge = $('#onay-' + id);
+            onayBadge.removeClass('badge-pending').addClass('badge-active').text('Onaylı');
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+
+function dogruIsaretle(id) {
+    $.post('@Url.Action("DogruIsaretle")', { id: id }, function(response) {
+        if (response.success) {
+            var badge = $('#dogru-' + id);
+            if (response.dogruMu) {
+                badge.removeClass('bg-secondary').addClass('bg-success').html('<i class="fas fa-check"></i>');
+            } else {
+                badge.removeClass('bg-success').addClass('bg-secondary').text('-');
+            }
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+</script>
+}
+
+

@@ -1,0 +1,83 @@
+@model KullaniciViewModel
+@{
+    ViewData["Title"] = "Yeni Kullanıcı";
+}
+
+<div class="page-header">
+    <h2 class="page-title">Yeni Kullanıcı</h2>
+    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+    </a>
+</div>
+
+<div class="data-card">
+    <div class="data-card-body">
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Ad" class="form-label"></label>
+                        <input asp-for="Ad" class="form-control" placeholder="Ad giriniz" />
+                        <span asp-validation-for="Ad" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Soyad" class="form-label"></label>
+                        <input asp-for="Soyad" class="form-control" placeholder="Soyad giriniz" />
+                        <span asp-validation-for="Soyad" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="E-posta adresi giriniz" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Sifre" class="form-label"></label>
+                        <input asp-for="Sifre" type="password" class="form-control" placeholder="Şifre giriniz" />
+                        <span asp-validation-for="Sifre" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="SifreTekrar" class="form-label"></label>
+                        <input asp-for="SifreTekrar" type="password" class="form-control" placeholder="Şifreyi tekrar giriniz" />
+                        <span asp-validation-for="SifreTekrar" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="AktifMi" class="form-check-input" type="checkbox" checked />
+                        <label asp-for="AktifMi" class="form-check-label"></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="AdminMi" class="form-check-input" type="checkbox" />
+                        <label asp-for="AdminMi" class="form-check-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4" />
+            
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Kaydet
+                </button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
