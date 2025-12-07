@@ -27,7 +27,7 @@ namespace SoruCevapPortali.Controllers
                 {
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                 }
-                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                return RedirectToAction("Index", "Home");
             }
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -98,8 +98,14 @@ namespace SoruCevapPortali.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+        [HttpGet]
         public IActionResult AccessDenied()
         {
+            // Kullanıcı giriş yapmamışsa login'e yönlendir
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login", new { returnUrl = Request.Path });
+            }
             return View();
         }
     }
