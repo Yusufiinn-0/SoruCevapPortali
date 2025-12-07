@@ -62,7 +62,7 @@ namespace SoruCevapPortali.Models.Context
                     Sifre = "Admin123!", // Gerçek uygulamada hash'lenmiş olmalı
                     AdminMi = true,
                     AktifMi = true,
-                    KayitTarihi = DateTime.Now
+                    KayitTarihi = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Unspecified) // Migration için sabit değer
                 }
             );
 

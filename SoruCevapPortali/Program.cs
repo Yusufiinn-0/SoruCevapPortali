@@ -43,20 +43,21 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Veritabanını otomatik oluştur
+// Veritabanını Migration ile oluştur (HasData seed data için gerekli)
 try
 {
-    using (var scope = app.Services.CreateScope())
+    await using (var scope = app.Services.CreateAsyncScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         
         logger.LogInformation("Veritabanı bağlantısı kontrol ediliyor...");
         
-        // Veritabanını oluştur
-        context.Database.EnsureCreated();
+        // Bekleyen migration'ları uygula (Migration yoksa oluşturur, varsa günceller)
+        // Database.Migrate() HasData seed data'sını da çalıştırır
+        context.Database.Migrate();
         
-        logger.LogInformation("Veritabanı başarıyla oluşturuldu!");
+        logger.LogInformation("Veritabanı migration'ları başarıyla uygulandı!");
     }
 }
 catch (Exception ex)

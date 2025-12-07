@@ -392,3 +392,6 @@ FodyWeavers.xsd
 query
 *.query
 
+# Ignore duplicate project folder
+Yusufiinn-0/
+
