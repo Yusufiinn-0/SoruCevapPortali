@@ -44,7 +44,6 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Veritabanını otomatik oluştur
-bool dbCreated = false;
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -56,7 +55,6 @@ try
         
         // Veritabanını oluştur
         context.Database.EnsureCreated();
-        dbCreated = true;
         
         logger.LogInformation("Veritabanı başarıyla oluşturuldu!");
     }

@@ -58,11 +58,11 @@ namespace SoruCevapPortali.Models.Context
                     KullaniciId = 1,
                     Ad = "Admin",
                     Soyad = "User",
-                    Email = "admin@sorucevap.com",
-                    Sifre = "admin123", // Gerçek uygulamada hash'lenmiş olmalı
+                    Email = "admin@admin.com",
+                    Sifre = "Admin123!", // Gerçek uygulamada hash'lenmiş olmalı
                     AdminMi = true,
                     AktifMi = true,
-                    KayitTarihi = new DateTime(2024, 1, 1)
+                    KayitTarihi = DateTime.Now
                 }
             );
 

@@ -22,7 +22,12 @@ namespace SoruCevapPortali.Controllers
         {
             if (User.Identity?.IsAuthenticated == true)
             {
-                return RedirectToAction("Index", "Home");
+                // Eğer admin ise admin paneline, değilse home'a yönlendir
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                }
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
             }
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -90,7 +95,7 @@ namespace SoruCevapPortali.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult AccessDenied()

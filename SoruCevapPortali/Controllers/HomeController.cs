@@ -15,6 +15,11 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        // Eğer authenticated ise admin paneline, değilse login'e yönlendir
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+        }
         return RedirectToAction("Login", "Account");
     }
 

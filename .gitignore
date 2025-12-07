@@ -385,3 +385,10 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# Entity Framework Migrations (uncomment if you want to ignore migrations)
+# Migrations/
+
+# Query files
+query
+*.query
+
