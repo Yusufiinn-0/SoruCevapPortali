@@ -4,26 +4,31 @@ Write-Host "Soru Cevap Portalı - Başlatılıyor..." -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# SQL Server Express servisini kontrol et
-Write-Host "SQL Server Express kontrol ediliyor..." -ForegroundColor Yellow
-$sqlService = Get-Service -Name "MSSQL*SQLEXPRESS" -ErrorAction SilentlyContinue
+# SQL LocalDB kontrol et / başlat (Varsayılan: MSSQLLocalDB)
+Write-Host "SQL LocalDB kontrol ediliyor..." -ForegroundColor Yellow
+$sqlLocalDbCmd = Get-Command "sqllocaldb" -ErrorAction SilentlyContinue
 
-if ($null -eq $sqlService -or $sqlService.Status -ne "Running") {
-    Write-Host "SQL Server Express servisi çalışmıyor! Başlatılıyor..." -ForegroundColor Yellow
-    try {
-        Start-Service -Name "MSSQL`$SQLEXPRESS" -ErrorAction Stop
-        Write-Host "SQL Server Express başlatıldı." -ForegroundColor Green
-    }
-    catch {
-        Write-Host "HATA: SQL Server Express başlatılamadı!" -ForegroundColor Red
-        Write-Host "Lütfen SQL Server Express'in kurulu olduğundan emin olun." -ForegroundColor Red
-        Read-Host "Devam etmek için Enter'a basın"
-        exit 1
-    }
+if ($null -eq $sqlLocalDbCmd) {
+    Write-Host "UYARI: sqllocaldb bulunamadı. SQL Server LocalDB kurulu değil olabilir." -ForegroundColor Red
+    Write-Host "Çözüm:" -ForegroundColor Yellow
+    Write-Host " - Visual Studio Installer > Individual components > 'SQL Server Express LocalDB' yükleyin" -ForegroundColor Yellow
+    Write-Host " - veya SQL Server Express kurun (SQL-INDIR.bat)" -ForegroundColor Yellow
+    Read-Host "Devam etmek için Enter'a basın"
+    exit 1
 }
-else {
-    Write-Host "SQL Server Express çalışıyor." -ForegroundColor Green
+
+try {
+    # MSSQLLocalDB instance'ını başlat (varsa)
+    sqllocaldb start MSSQLLocalDB | Out-Null
+    Write-Host "SQL LocalDB (MSSQLLocalDB) hazır." -ForegroundColor Green
 }
+catch {
+    Write-Host "HATA: SQL LocalDB başlatılamadı!" -ForegroundColor Red
+    Write-Host "Çözüm: Visual Studio Installer'dan 'SQL Server Express LocalDB' yükleyin veya SQL Server Express kurun." -ForegroundColor Yellow
+    Read-Host "Devam etmek için Enter'a basın"
+    exit 1
+}
+
 Write-Host ""
 
 # Proje dizinine git
@@ -56,6 +61,10 @@ Start-Process "http://localhost:5000"
 
 # Projeyi başlat
 dotnet run --urls "http://localhost:5000"
+
+
+
+
 
 
 

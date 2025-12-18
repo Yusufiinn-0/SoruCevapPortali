@@ -1,0 +1,150 @@
+@model List<AnswerViewModel>
+@{
+    ViewData["Title"] = "Cevaplar";
+}
+
+<div class="page-header">
+    <h2 class="page-title">Cevaplar</h2>
+</div>
+
+<div class="data-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cevap</th>
+                    <th>Soru</th>
+                    <th>Kullanıcı</th>
+                    <th>Beğeni</th>
+                    <th>Doğru?</th>
+                    <th>Onay</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var answer in Model)
+                    {
+                        <tr>
+                            <td>#@answer.AnswerId</td>
+                            <td>
+                                <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    @answer.Content
+                                </div>
+                                <small class="text-muted">@answer.CreatedDate.ToString("dd.MM.yyyy HH:mm")</small>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Details", "Question", new { area = "Admin", id = answer.QuestionId })" 
+                                   class="text-primary text-decoration-none">
+                                    <div style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        @answer.QuestionTitle
+                                    </div>
+                                </a>
+                            </td>
+                            <td>@answer.UserName</td>
+                            <td><i class="fas fa-heart text-danger me-1"></i>@answer.LikeCount</td>
+                            <td>
+                                @if (answer.IsCorrectAnswer)
+                                {
+                                    <span class="badge bg-success" id="correct-@answer.AnswerId">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary" id="correct-@answer.AnswerId">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (answer.IsApproved)
+                                {
+                                    <span class="badge-status badge-active" id="approve-@answer.AnswerId">Onaylı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status badge-pending" id="approve-@answer.AnswerId">Bekliyor</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="@Url.Action("Details", new { id = answer.AnswerId })" 
+                                       class="btn-action view" title="Detay">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = answer.AnswerId })" 
+                                       class="btn-action edit" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    @if (!answer.IsApproved)
+                                    {
+                                        <button type="button" class="btn-action view" title="Onayla"
+                                                onclick="approve(@answer.AnswerId)">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    }
+                                    <button type="button" class="btn-action @(answer.IsCorrectAnswer ? "view" : "")" 
+                                            title="Doğru İşaretle" onclick="markCorrect(@answer.AnswerId)"
+                                            style="@(answer.IsCorrectAnswer ? "" : "background: rgba(108, 117, 125, 0.1); color: #6c757d;")">
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
+                                    <form asp-action="Delete" method="post" style="display:inline;" 
+                                          onsubmit="return confirm('Bu cevabı silmek istediğinize emin misiniz?');">
+                                        <input type="hidden" name="id" value="@answer.AnswerId" />
+                                        <button type="submit" class="btn-action delete" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                            Henüz cevap eklenmemiş.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function approve(id) {
+    $.post('@Url.Action("Approve")', { id: id }, function(response) {
+        if (response.success) {
+            var approveBadge = $('#approve-' + id);
+            approveBadge.removeClass('badge-pending').addClass('badge-active').text('Onaylı');
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+
+function markCorrect(id) {
+    $.post('@Url.Action("MarkCorrect")', { id: id }, function(response) {
+        if (response.success) {
+            var badge = $('#correct-' + id);
+            if (response.isCorrect) {
+                badge.removeClass('bg-secondary').addClass('bg-success').html('<i class="fas fa-check"></i>');
+            } else {
+                badge.removeClass('bg-success').addClass('bg-secondary').text('-');
+            }
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+</script>
+}
+
+

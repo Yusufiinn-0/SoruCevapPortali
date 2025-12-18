@@ -1,0 +1,182 @@
+@model SoruCevapPortali.Models.Entity.ApplicationUser
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+                        {
+                            <img src="@Model.ProfilePicture" alt="Profil" class="rounded-circle" width="120" height="120">
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px; font-size: 48px;">
+                                @(Model.FirstName?.Substring(0, Math.Min(1, Model.FirstName.Length)).ToUpper() ?? "U")@(Model.LastName?.Substring(0, Math.Min(1, Model.LastName.Length)).ToUpper() ?? "U")
+                            </div>
+                        }
+                    </div>
+                    <h5>@Model.FirstName @Model.LastName</h5>
+                    <p class="text-muted">@Model.Email</p>
+                    <p class="text-muted small">Üyelik: @Model.RegistrationDate.ToString("dd MMM yyyy")</p>
+                    <a href="@Url.Action("Edit")" class="btn btn-primary w-100">
+                        <i class="fas fa-edit"></i> Profili Düzenle
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6>İstatistikler</h6>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Toplam Soru:</span>
+                        <strong>@ViewBag.TotalQuestion</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Onaylı Soru:</span>
+                        <strong>@ViewBag.ApprovedQuestion</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Toplam Cevap:</span>
+                        <strong>@ViewBag.TotalAnswer</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Onaylı Cevap:</span>
+                        <strong>@ViewBag.ApprovedAnswer</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <ul class="nav nav-tabs mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#questions">Sorularım</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#answers">Cevaplarım</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="questions">
+                    <h5>Sorularım</h5>
+                    @if (ViewBag.Questions != null)
+                    {
+                        var questionsList = ViewBag.Questions as System.Collections.IEnumerable;
+                        if (questionsList != null && questionsList.Cast<object>().Any())
+                        {
+                            @foreach (dynamic question in questionsList)
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6>
+                                                    <a href="@Url.Action("Details", "Question", new { id = question.QuestionId })">@(question.Title ?? "Başlıksız")</a>
+                                                </h6>
+                                                <p class="text-muted small mb-0">
+                                                    <span class="badge bg-secondary">@(question.CategoryName ?? "Kategori Yok")</span>
+                                                    <span class="ms-2">@(question.CreatedDate != null ? ((DateTime)question.CreatedDate).ToString("dd MMM yyyy") : "")</span>
+                                                    <span class="ms-2"><i class="fas fa-comments"></i> @(question.AnswerCount ?? 0) cevap</span>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                @if (question.IsApproved == true)
+                                                {
+                                                    <span class="badge bg-success">Onaylı</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Beklemede</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">Henüz soru sormadınız.</p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz soru sormadınız.</p>
+                    }
+                </div>
+
+                <div class="tab-pane fade" id="answers">
+                    <h5>Cevaplarım</h5>
+                    @if (ViewBag.Answers != null)
+                    {
+                        var answersList = ViewBag.Answers as System.Collections.IEnumerable;
+                        if (answersList != null && answersList.Cast<object>().Any())
+                        {
+                            @foreach (dynamic answer in answersList)
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6>
+                                                    <a href="@Url.Action("Details", "Question", new { id = answer.QuestionId })">@(answer.QuestionTitle ?? "Soru Bulunamadı")</a>
+                                                </h6>
+                                                @{
+                                                    var content = answer.Content?.ToString() ?? "";
+                                                    var displayContent = content.Length > 150 ? content.Substring(0, 150) + "..." : content;
+                                                }
+                                                <p class="text-muted small">@displayContent</p>
+                                                <p class="text-muted small mb-0">
+                                                    <span>@(answer.CreatedDate != null ? ((DateTime)answer.CreatedDate).ToString("dd MMM yyyy") : "")</span>
+                                                    @if (answer.IsCorrectAnswer == true)
+                                                    {
+                                                        <span class="badge bg-success ms-2"><i class="fas fa-check"></i> Doğru Cevap</span>
+                                                    }
+                                                </p>
+                                            </div>
+                                            <div>
+                                                @if (answer.IsApproved == true)
+                                                {
+                                                    <span class="badge bg-success">Onaylı</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Beklemede</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">Henüz cevap vermediniz.</p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz cevap vermediniz.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

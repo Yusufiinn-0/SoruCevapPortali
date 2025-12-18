@@ -1,0 +1,90 @@
+@model UserViewModel
+@{
+    ViewData["Title"] = "New User";
+}
+
+<div class="page-header">
+    <h2 class="page-title">New User</h2>
+    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back
+    </a>
+</div>
+
+<div class="data-card">
+    <div class="data-card-body">
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" type="email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="PasswordConfirm" class="form-label"></label>
+                        <input asp-for="PasswordConfirm" type="password" class="form-control" />
+                        <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3 pt-4">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                            <label asp-for="IsActive" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3 pt-4">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsAdmin" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsAdmin" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4" />
+            
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Save
+                </button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

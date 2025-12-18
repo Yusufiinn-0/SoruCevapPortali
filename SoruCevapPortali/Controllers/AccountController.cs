@@ -1,20 +1,24 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SoruCevapPortali.Models.Entity;
 using SoruCevapPortali.Models.ViewModel;
-using SoruCevapPortali.Repository;
-using System.Security.Claims;
 
 namespace SoruCevapPortali.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IRepository<Kullanici> _kullaniciRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(IRepository<Kullanici> kullaniciRepository)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _kullaniciRepository = kullaniciRepository;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -22,7 +26,6 @@ namespace SoruCevapPortali.Controllers
         {
             if (User.Identity?.IsAuthenticated == true)
             {
-                // Eğer admin ise admin paneline, değilse home'a yönlendir
                 if (User.IsInRole("Admin"))
                 {
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
@@ -41,47 +44,29 @@ namespace SoruCevapPortali.Controllers
 
             if (ModelState.IsValid)
             {
-                var kullanici = await _kullaniciRepository.GetFirstOrDefaultAsync(
-                    k => k.Email == model.Email && k.Sifre == model.Sifre && k.AktifMi);
-
-                if (kullanici != null)
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && user.IsActive)
                 {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, kullanici.KullaniciId.ToString()),
-                        new Claim(ClaimTypes.Name, $"{kullanici.Ad} {kullanici.Soyad}"),
-                        new Claim(ClaimTypes.Email, kullanici.Email),
-                        new Claim("AdminMi", kullanici.AdminMi.ToString())
-                    };
+                    var result = await _signInManager.PasswordSignInAsync(
+                        user.UserName!,
+                        model.Password,
+                        model.RememberMe,
+                        lockoutOnFailure: false);
 
-                    if (kullanici.AdminMi)
+                    if (result.Succeeded)
                     {
-                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
+
+                        if (await _userManager.IsInRoleAsync(user, "Admin"))
+                        {
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        }
+
+                        return RedirectToAction("Index", "Home");
                     }
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = model.BeniHatirla,
-                        ExpiresUtc = model.BeniHatirla ? DateTimeOffset.UtcNow.AddDays(7) : DateTimeOffset.UtcNow.AddHours(2)
-                    };
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    {
-                        return Redirect(returnUrl);
-                    }
-
-                    if (kullanici.AdminMi)
-                    {
-                        return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-                    }
-
-                    return RedirectToAction("Index", "Home");
                 }
 
                 ModelState.AddModelError(string.Empty, "Geçersiz e-posta veya şifre.");
@@ -94,8 +79,47 @@ namespace SoruCevapPortali.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    IsActive = true,
+                    RegistrationDate = DateTime.Now,
+                    EmailConfirmed = true
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            return View(model);
         }
 
         [HttpGet]

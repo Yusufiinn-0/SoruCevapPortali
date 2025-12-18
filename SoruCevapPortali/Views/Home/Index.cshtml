@@ -149,6 +149,13 @@
         box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         border: 2px solid transparent;
         cursor: pointer;
+        display: block;
+        color: inherit;
+    }
+    
+    .category-card:hover {
+        color: inherit;
+        text-decoration: none;
     }
     
     .category-card:hover {
@@ -173,11 +180,15 @@
         transform: scale(1.1) rotate(5deg);
     }
     
-    .category-icon.tech { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .category-icon.tech,
+    .category-icon.laptop { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
     .category-icon.code { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .category-icon.edu { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-    .category-icon.health { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-    .category-icon.general { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+    .category-icon.edu,
+    .category-icon.graduation-cap { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .category-icon.health,
+    .category-icon.heartbeat { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .category-icon.general,
+    .category-icon.globe { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
     
     .category-name {
         font-size: 1.2rem;
@@ -301,23 +312,23 @@
                         Aklına takılan soruları sor, uzman topluluğumuzdan hızlı ve güvenilir cevaplar al. 
                         Bilgi paylaşarak birlikte öğrenelim.
                     </p>
-                    <div class="hero-search">
-                        <input type="text" placeholder="Bir soru ara veya yaz..." />
-                        <button type="button">
+                    <form action="@Url.Action("Index", "Question")" method="get" class="hero-search">
+                        <input type="text" name="search" placeholder="Bir soru ara veya yaz..." />
+                        <button type="submit">
                             <i class="fas fa-search me-2"></i>Ara
                         </button>
-                    </div>
+                    </form>
                     <div class="hero-stats">
                         <div class="hero-stat">
-                            <div class="hero-stat-value">1,234</div>
+                            <div class="hero-stat-value">@(ViewBag.TotalUser ?? 0)</div>
                             <div class="hero-stat-label">Aktif Kullanıcı</div>
                         </div>
                         <div class="hero-stat">
-                            <div class="hero-stat-value">5,678</div>
+                            <div class="hero-stat-value">@(ViewBag.TotalQuestion ?? 0)</div>
                             <div class="hero-stat-label">Soru</div>
                         </div>
                         <div class="hero-stat">
-                            <div class="hero-stat-value">12,345</div>
+                            <div class="hero-stat-value">@(ViewBag.TotalAnswer ?? 0)</div>
                             <div class="hero-stat-label">Cevap</div>
                         </div>
                     </div>
@@ -353,59 +364,59 @@
             <p class="section-subtitle">İlgilendiğin konuları keşfet, sorularını paylaş</p>
         </div>
         <div class="row g-4">
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <div class="category-icon tech">
-                        <i class="fas fa-laptop"></i>
+            @if (ViewBag.Kategoriler != null)
+            {
+                var kategorilerList = ViewBag.Kategoriler as List<dynamic>;
+                @if (kategorilerList != null && kategorilerList.Any())
+                {
+                    @foreach (var kategori in kategorilerList)
+                    {
+                        var iconClass = kategori?.Ikon?.ToString()?.Replace("fa-", "") ?? "globe";
+                        var kategoriId = kategori?.KategoriId ?? 0;
+                        var kategoriAdi = kategori?.KategoriAdi?.ToString() ?? "Kategori";
+                        var ikon = kategori?.Ikon?.ToString() ?? "fa-globe";
+                        var soruSayisi = kategori?.SoruSayisi ?? 0;
+                        
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="@Url.Action("Index", "Soru", new { kategoriId = kategoriId })" class="text-decoration-none">
+                                <div class="category-card">
+                                    <div class="category-icon @iconClass">
+                                        <i class="fas @ikon"></i>
+                                    </div>
+                                    <h5 class="category-name">@kategoriAdi</h5>
+                                    <span class="category-count">@soruSayisi soru</span>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>Henüz kategori bulunmamaktadır.
+                        </div>
                     </div>
-                    <h5 class="category-name">Teknoloji</h5>
-                    <span class="category-count">248 soru</span>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <div class="category-icon code">
-                        <i class="fas fa-code"></i>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>Kategoriler yükleniyor...
                     </div>
-                    <h5 class="category-name">Yazılım</h5>
-                    <span class="category-count">512 soru</span>
                 </div>
-            </div>
+            }
             <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <div class="category-icon edu">
-                        <i class="fas fa-graduation-cap"></i>
+                <a href="@Url.Action("Index", "Soru")" class="text-decoration-none">
+                    <div class="category-card">
+                        <div class="category-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h5 class="category-name">Tümünü Gör</h5>
+                        <span class="category-count">Keşfet →</span>
                     </div>
-                    <h5 class="category-name">Eğitim</h5>
-                    <span class="category-count">186 soru</span>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <div class="category-icon health">
-                        <i class="fas fa-heartbeat"></i>
-                    </div>
-                    <h5 class="category-name">Sağlık</h5>
-                    <span class="category-count">94 soru</span>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <div class="category-icon general">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h5 class="category-name">Genel</h5>
-                    <span class="category-count">325 soru</span>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-6">
-                <div class="category-card">
-                    <div class="category-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <h5 class="category-name">Tümünü Gör</h5>
-                    <span class="category-count">Keşfet →</span>
-                </div>
+                </a>
             </div>
         </div>
     </div>

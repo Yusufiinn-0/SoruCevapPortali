@@ -1,0 +1,146 @@
+@model List<UserViewModel>
+@{
+    ViewData["Title"] = "Kullanıcılar";
+}
+
+<div class="page-header">
+    <h2 class="page-title">Kullanıcılar</h2>
+    <a href="@Url.Action("Create")" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Yeni Kullanıcı
+    </a>
+</div>
+
+<div class="data-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ad Soyad</th>
+                    <th>E-posta</th>
+                    <th>Kayıt Tarihi</th>
+                    <th>Soru</th>
+                    <th>Cevap</th>
+                    <th>Yetki</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>#@user.UserId</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="topbar-avatar me-2" style="width: 35px; height: 35px; font-size: 14px;">
+                                        @user.FirstName.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <div>
+                                        <strong>@user.FirstName @user.LastName</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@user.Email</td>
+                            <td>@user.RegistrationDate?.ToString("dd.MM.yyyy")</td>
+                            <td><span class="badge bg-primary">@user.QuestionCount</span></td>
+                            <td><span class="badge bg-success">@user.AnswerCount</span></td>
+                            <td>
+                                @if (user.IsAdmin)
+                                {
+                                    <span class="badge bg-danger" id="admin-@user.UserId">Admin</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary" id="admin-@user.UserId">Üye</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge-status @(user.IsActive ? "badge-active" : "badge-inactive")" 
+                                      id="status-@user.UserId">
+                                    @(user.IsActive ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="@Url.Action("Edit", new { id = user.UserId })" 
+                                       class="btn-action edit" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    @if (user.UserId != User.Identity?.Name)
+                                    {
+                                        <button type="button" class="btn-action view" title="Durum Değiştir"
+                                                onclick="toggleStatus('@user.UserId')">
+                                            <i class="fas fa-power-off"></i>
+                                        </button>
+                                        <button type="button" class="btn-action @(user.IsAdmin ? "delete" : "")" 
+                                                title="Admin Yetkisi" onclick="toggleAdmin('@user.UserId')"
+                                                style="@(user.IsAdmin ? "" : "background: rgba(108, 117, 125, 0.1); color: #6c757d;")">
+                                            <i class="fas fa-user-shield"></i>
+                                        </button>
+                                        <form asp-action="Delete" method="post" style="display:inline;" 
+                                              onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');">
+                                            <input type="hidden" name="id" value="@user.UserId" />
+                                            <button type="submit" class="btn-action delete" title="Sil">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-5">
+                            <i class="fas fa-users fa-3x mb-3 d-block"></i>
+                            Henüz kullanıcı bulunmuyor.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function toggleStatus(id) {
+    $.post('@Url.Action("ToggleStatus")', { id: id }, function(response) {
+        if (response.success) {
+            var statusBadge = $('#status-' + id);
+            if (response.isActive) {
+                statusBadge.removeClass('badge-inactive').addClass('badge-active').text('Aktif');
+            } else {
+                statusBadge.removeClass('badge-active').addClass('badge-inactive').text('Pasif');
+            }
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+
+function toggleAdmin(id) {
+    $.post('@Url.Action("ToggleAdmin")', { id: id }, function(response) {
+        if (response.success) {
+            var adminBadge = $('#admin-' + id);
+            if (response.isAdmin) {
+                adminBadge.removeClass('bg-secondary').addClass('bg-danger').text('Admin');
+            } else {
+                adminBadge.removeClass('bg-danger').addClass('bg-secondary').text('Üye');
+            }
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+</script>
+}
+
+

@@ -10,7 +10,7 @@
             <div class="stat-card-icon primary">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="stat-card-value">@Model.ToplamKullanici</div>
+            <div class="stat-card-value">@Model.TotalUser</div>
             <div class="stat-card-label">Toplam Kullanıcı</div>
         </div>
     </div>
@@ -19,7 +19,7 @@
             <div class="stat-card-icon success">
                 <i class="fas fa-question-circle"></i>
             </div>
-            <div class="stat-card-value">@Model.ToplamSoru</div>
+            <div class="stat-card-value">@Model.TotalQuestion</div>
             <div class="stat-card-label">Toplam Soru</div>
         </div>
     </div>
@@ -28,7 +28,7 @@
             <div class="stat-card-icon warning">
                 <i class="fas fa-comments"></i>
             </div>
-            <div class="stat-card-value">@Model.ToplamCevap</div>
+            <div class="stat-card-value">@Model.TotalAnswer</div>
             <div class="stat-card-label">Toplam Cevap</div>
         </div>
     </div>
@@ -37,7 +37,7 @@
             <div class="stat-card-icon info">
                 <i class="fas fa-folder"></i>
             </div>
-            <div class="stat-card-value">@Model.ToplamKategori</div>
+            <div class="stat-card-value">@Model.TotalCategory</div>
             <div class="stat-card-label">Toplam Kategori</div>
         </div>
     </div>
@@ -56,7 +56,7 @@
                     <div class="col-6">
                         <div class="stat-card" style="border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.05);">
                             <div class="text-center">
-                                <div class="stat-card-value" style="font-size: 32px; color: #10b981;">@(Model.ToplamSoru - Model.BekleyenSorular)</div>
+                                <div class="stat-card-value" style="font-size: 32px; color: #10b981;">@(Model.TotalQuestion - Model.PendingQuestions)</div>
                                 <div class="stat-card-label" style="color: #10b981; font-weight: 600;">Çözülmüş</div>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                     <div class="col-6">
                         <div class="stat-card" style="border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.05);">
                             <div class="text-center">
-                                <div class="stat-card-value" style="font-size: 32px; color: #f59e0b;">@Model.BekleyenSorular</div>
+                                <div class="stat-card-value" style="font-size: 32px; color: #f59e0b;">@Model.PendingQuestions</div>
                                 <div class="stat-card-label" style="color: #f59e0b; font-weight: 600;">Bekleyen</div>
                             </div>
                         </div>
@@ -114,25 +114,25 @@
             <div class="data-card-body">
                 <div class="row g-3">
                     <div class="col-md-3 col-6">
-                        <a href="@Url.Action("Index", "Kullanici", new { area = "Admin" })" class="btn btn-outline-primary w-100 p-3" style="border-width: 2px; font-weight: 600;">
+                        <a href="@Url.Action("Index", "User", new { area = "Admin" })" class="btn btn-outline-primary w-100 p-3" style="border-width: 2px; font-weight: 600;">
                             <i class="fas fa-users fa-2x d-block mb-2"></i>
                             Kullanıcıları Yönet
                         </a>
                     </div>
                     <div class="col-md-3 col-6">
-                        <a href="@Url.Action("Index", "Kategori", new { area = "Admin" })" class="btn btn-outline-success w-100 p-3" style="border-width: 2px; font-weight: 600;">
+                        <a href="@Url.Action("Index", "Category", new { area = "Admin" })" class="btn btn-outline-success w-100 p-3" style="border-width: 2px; font-weight: 600;">
                             <i class="fas fa-folder fa-2x d-block mb-2"></i>
                             Kategorileri Yönet
                         </a>
                     </div>
                     <div class="col-md-3 col-6">
-                        <a href="@Url.Action("Index", "Soru", new { area = "Admin" })" class="btn btn-outline-warning w-100 p-3" style="border-width: 2px; font-weight: 600;">
+                        <a href="@Url.Action("Index", "Question", new { area = "Admin" })" class="btn btn-outline-warning w-100 p-3" style="border-width: 2px; font-weight: 600;">
                             <i class="fas fa-question fa-2x d-block mb-2"></i>
                             Soruları Yönet
                         </a>
                     </div>
                     <div class="col-md-3 col-6">
-                        <a href="@Url.Action("Index", "Cevap", new { area = "Admin" })" class="btn btn-outline-info w-100 p-3" style="border-width: 2px; font-weight: 600;">
+                        <a href="@Url.Action("Index", "Answer", new { area = "Admin" })" class="btn btn-outline-info w-100 p-3" style="border-width: 2px; font-weight: 600;">
                             <i class="fas fa-comments fa-2x d-block mb-2"></i>
                             Cevapları Yönet
                         </a>
@@ -152,7 +152,7 @@
                 <h5 class="data-card-title">
                     <i class="fas fa-question-circle me-2 text-primary"></i>Son Sorular
                 </h5>
-                <a href="@Url.Action("Index", "Soru", new { area = "Admin" })" class="btn btn-sm btn-outline-primary">
+                <a href="@Url.Action("Index", "Question", new { area = "Admin" })" class="btn btn-sm btn-outline-primary">
                     Tümünü Gör
                 </a>
             </div>
@@ -166,20 +166,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model.SonSorular.Any())
+                        @if (Model.RecentQuestions.Any())
                         {
-                            @foreach (var soru in Model.SonSorular)
+                            @foreach (var question in Model.RecentQuestions)
                             {
                                 <tr>
                                     <td>
                                         <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                            @soru.Baslik
+                                            @question.Title
                                         </div>
-                                        <small class="text-muted">@soru.KullaniciAdi</small>
+                                        <small class="text-muted">@question.UserName</small>
                                     </td>
-                                    <td>@soru.KategoriAdi</td>
+                                    <td>@question.CategoryName</td>
                                     <td>
-                                        @if (soru.OnayliMi)
+                                        @if (question.IsApproved)
                                         {
                                             <span class="badge-status badge-active">Onaylı</span>
                                         }
@@ -213,7 +213,7 @@
                 <h5 class="data-card-title">
                     <i class="fas fa-comments me-2 text-success"></i>Son Cevaplar
                 </h5>
-                <a href="@Url.Action("Index", "Cevap", new { area = "Admin" })" class="btn btn-sm btn-outline-success">
+                <a href="@Url.Action("Index", "Answer", new { area = "Admin" })" class="btn btn-sm btn-outline-success">
                     Tümünü Gör
                 </a>
             </div>
@@ -227,19 +227,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model.SonCevaplar.Any())
+                        @if (Model.RecentAnswers.Any())
                         {
-                            @foreach (var cevap in Model.SonCevaplar)
+                            @foreach (var answer in Model.RecentAnswers)
                             {
                                 <tr>
                                     <td>
                                         <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                            @cevap.Icerik
+                                            @answer.Content
                                         </div>
                                     </td>
-                                    <td>@cevap.KullaniciAdi</td>
+                                    <td>@answer.UserName</td>
                                     <td>
-                                        @if (cevap.OnayliMi)
+                                        @if (answer.IsApproved)
                                         {
                                             <span class="badge-status badge-active">Onaylı</span>
                                         }

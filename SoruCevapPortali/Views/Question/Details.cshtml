@@ -1,0 +1,131 @@
+@model SoruCevapPortali.Models.ViewModel.QuestionViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">@Model.Title</h2>
+                    <div class="d-flex gap-3 text-muted small mb-3">
+                        <span><i class="fas fa-folder"></i> @Model.CategoryName</span>
+                        <span><i class="fas fa-user"></i> @Model.UserName</span>
+                        <span><i class="fas fa-calendar"></i> @Model.CreatedDate.ToString("dd MMM yyyy HH:mm")</span>
+                        <span><i class="fas fa-eye"></i> @Model.ViewCount görüntülenme</span>
+                    </div>
+                    <hr>
+                    <div class="card-text">
+                        @Html.Raw(Model.Content.Replace("\n", "<br>"))
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments"></i> Cevaplar (@Model.Answers?.Count ?? 0)</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Answers != null && Model.Answers.Any())
+                    {
+                        @foreach (var answer in Model.Answers)
+                        {
+                            <div class="card mb-3 @(answer.IsCorrectAnswer ? "border-success" : "")">
+                                <div class="card-body">
+                                    @if (answer.IsCorrectAnswer)
+                                    {
+                                        <span class="badge bg-success mb-2"><i class="fas fa-check"></i> Doğru Cevap</span>
+                                    }
+                                    <p class="card-text">@Html.Raw(answer.Content.Replace("\n", "<br>"))</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="text-muted small">
+                                            <i class="fas fa-user"></i> @answer.UserName
+                                            <span class="ms-3"><i class="fas fa-calendar"></i> @answer.CreatedDate.ToString("dd MMM yyyy HH:mm")</span>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="like(@answer.AnswerId)">
+                                                <i class="fas fa-thumbs-up"></i> @answer.LikeCount
+                                            </button>
+                                            @if (User.Identity?.IsAuthenticated == true && User.Identity.Name == Model.UserName)
+                                            {
+                                                <button class="btn btn-sm btn-outline-success ms-2" onclick="markCorrectAnswer(@answer.AnswerId, @Model.QuestionId)">
+                                                    <i class="fas fa-check"></i> Doğru Cevap
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz cevap verilmemiş.</p>
+                    }
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <hr>
+                        <h6>Cevap Yaz</h6>
+                        <form asp-controller="Answer" asp-action="Create" method="post">
+                            <input type="hidden" name="QuestionId" value="@Model.QuestionId" />
+                            <div class="mb-3">
+                                <textarea name="Content" class="form-control" rows="5" placeholder="Cevabınızı yazın..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cevap Gönder</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <a asp-controller="Account" asp-action="Login">Giriş yapın</a> cevap verebilmek için.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function like(answerId) {
+            fetch('@Url.Action("Like", "Question")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                },
+                body: JSON.stringify({ id: answerId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        function markCorrectAnswer(answerId, questionId) {
+            fetch('@Url.Action("MarkCorrectAnswer", "Answer")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                },
+                body: JSON.stringify({ id: answerId, questionId: questionId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+    </script>
+}
+
+

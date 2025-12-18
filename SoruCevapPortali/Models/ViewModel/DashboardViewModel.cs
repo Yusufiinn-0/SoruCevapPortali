@@ -2,14 +2,14 @@ namespace SoruCevapPortali.Models.ViewModel
 {
     public class DashboardViewModel
     {
-        public int ToplamKullanici { get; set; }
-        public int ToplamSoru { get; set; }
-        public int ToplamCevap { get; set; }
-        public int ToplamKategori { get; set; }
-        public int BekleyenSorular { get; set; }
-        public int BekleyenCevaplar { get; set; }
-        public List<SoruViewModel> SonSorular { get; set; } = new();
-        public List<CevapViewModel> SonCevaplar { get; set; } = new();
+        public int TotalUser { get; set; }
+        public int TotalQuestion { get; set; }
+        public int TotalAnswer { get; set; }
+        public int TotalCategory { get; set; }
+        public int PendingQuestions { get; set; }
+        public int PendingAnswers { get; set; }
+        public List<QuestionViewModel> RecentQuestions { get; set; } = new();
+        public List<AnswerViewModel> RecentAnswers { get; set; } = new();
     }
 }
 

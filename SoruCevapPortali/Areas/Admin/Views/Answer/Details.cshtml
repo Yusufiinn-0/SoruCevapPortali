@@ -1,0 +1,116 @@
+@model Answer
+@{
+    ViewData["Title"] = "Answer Details";
+}
+
+<div class="page-header">
+    <h2 class="page-title">Answer Details</h2>
+    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="data-card mb-4">
+            <div class="data-card-header">
+                <h5 class="data-card-title">Answer Content</h5>
+                <div>
+                    @if (Model.IsApproved)
+                    {
+                        <span class="badge-status badge-active">Approved</span>
+                    }
+                    else
+                    {
+                        <span class="badge-status badge-pending">Pending</span>
+                    }
+                </div>
+            </div>
+            <div class="data-card-body">
+                <div class="mb-4">
+                    @Html.Raw(Model.Content.Replace("\n", "<br/>"))
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between text-muted small">
+                    <span><i class="fas fa-user me-1"></i>@Model.User?.FirstName @Model.User?.LastName</span>
+                    <span><i class="fas fa-calendar me-1"></i>@Model.CreatedDate.ToString("dd MMMM yyyy HH:mm")</span>
+                    <span><i class="fas fa-heart text-danger me-1"></i>@Model.LikeCount likes</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-card">
+            <div class="data-card-header">
+                <h5 class="data-card-title">
+                    <i class="fas fa-question-circle me-2"></i>Related Question
+                </h5>
+            </div>
+            <div class="data-card-body">
+                <h6>@Model.Question?.Title</h6>
+                <p class="text-muted small mb-0">@Model.Question?.Content</p>
+                <a href="@Url.Action("Details", "Question", new { area = "Admin", id = Model.QuestionId })" class="btn btn-sm btn-outline-primary mt-3">
+                    <i class="fas fa-eye me-1"></i>View Question
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="data-card mb-4">
+            <div class="data-card-header">
+                <h5 class="data-card-title">Information</h5>
+            </div>
+            <div class="data-card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Status</span>
+                        <span class="badge-status @(Model.IsActive ? "badge-active" : "badge-inactive")">
+                            @(Model.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Approval</span>
+                        <span class="badge-status @(Model.IsApproved ? "badge-active" : "badge-pending")">
+                            @(Model.IsApproved ? "Approved" : "Pending")
+                        </span>
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Correct Answer</span>
+                        @if (Model.IsCorrectAnswer)
+                        {
+                            <span class="badge bg-success">
+                                <i class="fas fa-check"></i> Yes
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">No</span>
+                        }
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Likes</span>
+                        <strong>@Model.LikeCount</strong>
+                    </li>
+                    <li class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Created Date</span>
+                        <strong>@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2">
+            <a href="@Url.Action("Edit", new { id = Model.AnswerId })" class="btn btn-primary">
+                <i class="fas fa-edit me-2"></i>Edit
+            </a>
+            <form asp-action="Delete" method="post" 
+                  onsubmit="return confirm('Are you sure you want to delete this answer?');">
+                <input type="hidden" name="id" value="@Model.AnswerId" />
+                <button type="submit" class="btn btn-outline-danger w-100">
+                    <i class="fas fa-trash me-2"></i>Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+

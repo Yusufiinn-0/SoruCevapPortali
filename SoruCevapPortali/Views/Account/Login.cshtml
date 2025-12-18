@@ -206,13 +206,13 @@
                 </div>
                 
                 <div class="form-floating">
-                    <input asp-for="Sifre" type="password" class="form-control" id="password" placeholder="Şifre" />
+                    <input asp-for="Password" type="password" class="form-control" id="password" placeholder="Şifre" />
                     <label for="password"><i class="fas fa-lock me-2"></i>Şifre</label>
-                    <span asp-validation-for="Sifre" class="text-danger small"></span>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
                 
                 <div class="form-check">
-                    <input asp-for="BeniHatirla" type="checkbox" class="form-check-input" id="rememberMe" />
+                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe" />
                     <label class="form-check-label" for="rememberMe">Beni Hatırla</label>
                 </div>
                 
@@ -220,6 +220,10 @@
                     <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
                 </button>
             </form>
+            
+            <div class="text-center mt-4">
+                <p class="text-white-50">Hesabınız yok mu? <a asp-action="Register" class="text-white fw-bold">Kayıt Ol</a></p>
+            </div>
             
             <a href="/" class="back-link">
                 <i class="fas fa-arrow-left"></i>Ana Sayfaya Dön

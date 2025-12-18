@@ -12,10 +12,10 @@ namespace SoruCevapPortali.Models.ViewModel
         [Required(ErrorMessage = "Şifre alanı zorunludur")]
         [DataType(DataType.Password)]
         [Display(Name = "Şifre")]
-        public string Sifre { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
         [Display(Name = "Beni Hatırla")]
-        public bool BeniHatirla { get; set; }
+        public bool RememberMe { get; set; }
     }
 }
 

@@ -1,0 +1,111 @@
+@model List<CategoryViewModel>
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<div class="page-header">
+    <h2 class="page-title">Kategoriler</h2>
+    <a href="@Url.Action("Create")" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Yeni Kategori
+    </a>
+</div>
+
+<div class="data-card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sıra</th>
+                    <th>İkon</th>
+                    <th>Kategori Adı</th>
+                    <th>Açıklama</th>
+                    <th>Soru Sayısı</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>@category.OrderNumber</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(category.Icon))
+                                {
+                                    <i class="fas @category.Icon fa-lg text-primary"></i>
+                                }
+                            </td>
+                            <td><strong>@category.CategoryName</strong></td>
+                            <td>@(category.Description ?? "-")</td>
+                            <td>
+                                <span class="badge bg-secondary">@category.QuestionCount soru</span>
+                            </td>
+                            <td>
+                                <span class="badge-status @(category.IsActive ? "badge-active" : "badge-inactive")" 
+                                      id="status-@category.CategoryId">
+                                    @(category.IsActive ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="@Url.Action("Edit", new { id = category.CategoryId })" 
+                                       class="btn-action edit" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn-action view" title="Durum Değiştir"
+                                            onclick="toggleStatus(@category.CategoryId)">
+                                        <i class="fas fa-power-off"></i>
+                                    </button>
+                                    <form asp-action="Delete" method="post" style="display:inline;" 
+                                          onsubmit="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?');">
+                                        <input type="hidden" name="id" value="@category.CategoryId" />
+                                        <button type="submit" class="btn-action delete" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="fas fa-folder-open fa-3x mb-3 d-block"></i>
+                            Henüz kategori eklenmemiş.
+                            <br>
+                            <a href="@Url.Action("Create")" class="btn btn-primary mt-3">
+                                <i class="fas fa-plus me-2"></i>İlk Kategoriyi Ekle
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function toggleStatus(id) {
+    $.post('@Url.Action("ToggleStatus")', { id: id }, function(response) {
+        if (response.success) {
+            var statusBadge = $('#status-' + id);
+            if (response.isActive) {
+                statusBadge.removeClass('badge-inactive').addClass('badge-active').text('Aktif');
+            } else {
+                statusBadge.removeClass('badge-active').addClass('badge-inactive').text('Pasif');
+            }
+            alert(response.message);
+        } else {
+            alert(response.message);
+        }
+    });
+}
+</script>
+}
+
+

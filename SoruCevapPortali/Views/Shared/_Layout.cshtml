@@ -300,12 +300,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#">
+                        <a class="nav-link nav-link-custom" asp-controller="Category" asp-action="Index">
                             <i class="fas fa-th-list me-2"></i>Kategoriler
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-custom" href="#">
+                        <a class="nav-link nav-link-custom" asp-controller="Question" asp-action="Index">
                             <i class="fas fa-question me-2"></i>Sorular
                         </a>
                     </li>
@@ -333,12 +333,12 @@
                                     <li><hr class="dropdown-divider"></li>
                                 }
                                 <li>
-                                    <a class="dropdown-item dropdown-item-custom" href="#">
+                                    <a class="dropdown-item dropdown-item-custom" asp-controller="Profile" asp-action="Index">
                                         <i class="fas fa-user"></i>Profilim
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item dropdown-item-custom" href="#">
+                                    <a class="dropdown-item dropdown-item-custom" asp-controller="Profile" asp-action="Index">
                                         <i class="fas fa-question-circle"></i>Sorularım
                                     </a>
                                 </li>
@@ -412,19 +412,19 @@
                 <div class="col-lg-2 col-md-4 mb-4">
                     <h6 class="text-white mb-3 fw-bold">Hızlı Linkler</h6>
                     <ul class="footer-links">
-                        <li><a href="#">Ana Sayfa</a></li>
-                        <li><a href="#">Kategoriler</a></li>
-                        <li><a href="#">Son Sorular</a></li>
-                        <li><a href="#">Popüler Sorular</a></li>
+                        <li><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                        <li><a asp-controller="Category" asp-action="Index">Kategoriler</a></li>
+                        <li><a asp-controller="Question" asp-action="Index">Son Sorular</a></li>
+                        <li><a asp-controller="Question" asp-action="Index">Popüler Sorular</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-md-4 mb-4">
                     <h6 class="text-white mb-3 fw-bold">Kategoriler</h6>
                     <ul class="footer-links">
-                        <li><a href="#">Teknoloji</a></li>
-                        <li><a href="#">Yazılım</a></li>
-                        <li><a href="#">Eğitim</a></li>
-                        <li><a href="#">Genel</a></li>
+                        <li><a asp-controller="Question" asp-action="Index" asp-route-categoryId="2">Teknoloji</a></li>
+                        <li><a asp-controller="Question" asp-action="Index" asp-route-categoryId="3">Yazılım</a></li>
+                        <li><a asp-controller="Question" asp-action="Index" asp-route-categoryId="4">Eğitim</a></li>
+                        <li><a asp-controller="Question" asp-action="Index" asp-route-categoryId="1">Genel</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-4 mb-4">
